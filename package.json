@@ -1,6 +1,6 @@
 {
-  "homepage": "https://Harshni555.github.io/earthquake-visualizer",
   "name": "global-earthquakes",
+  "homepage": "https://Harshni555.github.io/earthquake-visualizer/",
   "version": "6.0.1",
   "private": true,
   "dependencies": {
@@ -41,6 +41,7 @@
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
+
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
+  base: "/earthquake-visualizer",
   server: {
     open: true, // opens the broswer when the server starts
     host: "0.0.0.0", // Allows access from outside the container
