@@ -1,36 +1,22 @@
-import httpService from "./httpService";
-import { searchBy } from "../constants";
+// ✅ Clean and working version for Earthquake Visualizer
 
-const getEarthquakes = async (params: {
-  searchByTab: string;
-  numOfDays: string;
-  startTime: string;
-  endTime: string;
-}) => {
-  const { searchByTab, numOfDays, startTime, endTime } = params;
+export const getEarthquakes = async () => {
   try {
-    let queryParams = "format=geojson";
+    // You can change this later dynamically (all_hour, all_day, all_week, all_month)
+    const feedType = "all_day";
 
-    if (searchByTab === searchBy.days && numOfDays) {
-      queryParams += `&starttime=NOW - ${numOfDays}`;
-    }
-    if (searchByTab === searchBy.timePeriod) {
-      if (!startTime && !endTime) return;
-
-      if (startTime && endTime)
-        queryParams += `&starttime=${startTime}&endtime=${endTime}`;
-      else if (startTime) queryParams += `&starttime=${startTime}`;
-      else if (endTime) queryParams += `&endtime=${endTime}`;
-    }
-
-    const response = await httpService.get(
-      `/fdsnws/event/1/query?${queryParams}`
+    const response = await fetch(
+      `https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/${feedType}.geojson`
     );
-    return response.data;
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch earthquake data");
+    }
+
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.log("There was an error while getting the earthquakes", error);
-    return false;
+    console.error("Error fetching earthquake data:", error);
+    return null;
   }
 };
-
-export { getEarthquakes };

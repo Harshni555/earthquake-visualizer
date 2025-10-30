@@ -73,3 +73,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   display: none;
   -webkit-appearance: none;
 }
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0px rgba(0,255,255,0.6); }
+  50% { box-shadow: 0 0 15px rgba(0,255,255,0.6); }
+  100% { box-shadow: 0 0 0px rgba(0,255,255,0.6); }
+}
+.animate-glow {
+  animation: pulseGlow 1.5s infinite;
+}
+html {
+  scroll-behavior: smooth;
+}

@@ -17,6 +17,7 @@ const tabMapping: Record<SearchByTab, string> = {
   timePeriod: "time period"
 };
 
+
 export default function SearchByDialog() {
   const { settingsOpen, numOfDays, startTime, endTime, searchByTab, setStore } =
     useStore(
@@ -29,6 +30,8 @@ export default function SearchByDialog() {
         setStore: state.setStore
       }))
     );
+
+
 
   const handleChange = (value: string) => setStore({ numOfDays: value });
 

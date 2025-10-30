@@ -14,7 +14,16 @@ import { useStore } from "../../../hooks";
 
 let geojson: GeoJSON;
 
-export default function Earthquakes() {
+// ✅ New props for interactivity and filtering
+type EarthquakesProps = {
+  onSelectQuake?: (quake: any) => void;
+  filterMag?: number;
+};
+
+export default function Earthquakes({
+  onSelectQuake,
+  filterMag = 0,
+}: EarthquakesProps) {
   const map = useMap();
 
   const { magnitudePalette, numOfDays, startTime, endTime, searchByTab } =
@@ -24,7 +33,7 @@ export default function Earthquakes() {
         numOfDays: state.numOfDays,
         startTime: state.startTime,
         endTime: state.endTime,
-        searchByTab: state.searchByTab
+        searchByTab: state.searchByTab,
       }))
     );
 
@@ -32,27 +41,46 @@ export default function Earthquakes() {
     queryKey: ["earthquakes", searchByTab, numOfDays, startTime, endTime],
     queryFn: () =>
       getEarthquakes({ searchByTab, numOfDays, startTime, endTime }),
-    staleTime: 120000 // 2min
+    staleTime: 120000, // 2min
   });
 
   useEffect(() => {
     if (!earthquakes) return;
 
+    // remove old layer
     if (map && geojson && map.hasLayer(geojson)) map.removeLayer(geojson);
 
-    geojson = L.geoJSON(earthquakes.features, {
+    // ✅ filter by magnitude
+    const filteredFeatures = earthquakes.features.filter(
+      (f: FeatureProps) => f.properties.mag >= filterMag
+    );
+
+    // ✅ create new GeoJSON layer
+    geojson = L.geoJSON(filteredFeatures, {
       onEachFeature: (feature: FeatureProps, layer: Layer) => {
         const {
           properties,
-          geometry: { coordinates }
+          geometry: { coordinates },
         } = feature;
 
-        const popupContainer = document.createElement("div");
+        // ✅ handle marker click
+        layer.on("click", () => {
+          if (onSelectQuake) {
+            onSelectQuake({
+              place: properties.place,
+              mag: properties.mag,
+              time: properties.time,
+              lat: coordinates[1],
+              lon: coordinates[0],
+            });
+          }
+        });
 
+        // ✅ popup rendering
+        const popupContainer = document.createElement("div");
         createRoot(popupContainer).render(
           <PopupContent properties={properties} coordinates={coordinates} />
         );
-
         layer.bindPopup(popupContainer);
       },
       pointToLayer: (feature: FeatureProps, latlng: LatLng) => {
@@ -61,11 +89,12 @@ export default function Earthquakes() {
           latlng,
           geojsonMarkerOptions(magnitude, magnitudePalette)
         );
-      }
+      },
     });
 
+    // ✅ add new layer to map
     if (map) geojson.addTo(map);
-  }, [earthquakes, map, magnitudePalette]);
+  }, [earthquakes, map, magnitudePalette, filterMag, onSelectQuake]);
 
   if (isLoading) return <AppSpinner size="large" />;
 
