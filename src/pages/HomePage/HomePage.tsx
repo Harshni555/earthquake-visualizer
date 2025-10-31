@@ -6,7 +6,6 @@ import EarthquakeCharts from "../../components/Charts/EarthquakeCharts";
 import Skeleton from "../../components/ui/Skeleton";
 
 
-
 export default function HomePage() {
   const [filterMag, setFilterMag] = useState(0);
   const [selectedQuake, setSelectedQuake] = useState<any>(null);
