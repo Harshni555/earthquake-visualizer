@@ -3,7 +3,7 @@ import { Map } from "../../components/Map/Map";
 import TileLayers from "./TileLayers";
 import { motion, AnimatePresence } from "framer-motion";
 import EarthquakeCharts from "../../components/Charts/EarthquakeCharts";
-import Skeleton from "../../components/ui/Skeleton";
+import Skeleton from "../../components/ui/skeleton";
 
 
 export default function HomePage() {
